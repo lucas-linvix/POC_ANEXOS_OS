@@ -1,25 +1,29 @@
 let stream;
 
-export async function iniciarCamera(videoElement) {
+export async function iniciarCamera(videoElement, deviceId = null) {
   try {
-    // Se já existir stream, encerra antes
     if (stream) {
-      stream.getTracks().forEach((track) => track.stop());
+      stream.getTracks().forEach(track => track.stop());
     }
 
-    stream = await navigator.mediaDevices.getUserMedia({
-      video: {
-        facingMode: { ideal: "user" },
-      },
+    const constraints = {
+      video: deviceId
+        ? { deviceId: { exact: deviceId } }
+        : { facingMode: { ideal: "environment" } }, // traseira por padrão
       audio: false,
-    });
+    };
+
+    stream = await navigator.mediaDevices.getUserMedia(constraints);
 
     videoElement.srcObject = stream;
+    videoElement.playsInline = true; // IMPORTANTE para iOS
+    await videoElement.play();
+
   } catch (error) {
     console.error("Erro ao iniciar câmera:", error);
+    throw error;
   }
 }
-
 export function tirarFoto(videoElement) {
   const canvas = document.createElement("canvas");
   canvas.width = videoElement.videoWidth;
@@ -28,17 +32,18 @@ export function tirarFoto(videoElement) {
   const ctx = canvas.getContext("2d");
   ctx.drawImage(videoElement, 0, 0);
 
-  return new Promise((resolve) => {
+  return new Promise((resolve, reject) => {
     canvas.toBlob(
       (blob) => {
+        if (!blob) return reject("Erro ao gerar imagem");
         resolve(
           new File([blob], `foto_${Date.now()}.jpg`, {
             type: "image/jpeg",
-          }),
+          })
         );
       },
       "image/jpeg",
-      0.8,
+      0.9
     );
   });
 }
