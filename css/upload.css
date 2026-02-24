@@ -1,0 +1,21 @@
+body {
+  font-family: Arial;
+  padding: 20px;
+}
+
+#previewContainer {
+  margin-top: 20px;
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.preview-item {
+  border: 1px solid #ccc;
+  padding: 10px;
+}
+
+.preview-item img {
+  max-width: 150px;
+  display: block;
+}
