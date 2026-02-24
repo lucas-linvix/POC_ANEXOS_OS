@@ -14,6 +14,7 @@ fileInput.addEventListener("change", (e) => {
         arquivosSelecionados = [...arquivosSelecionados, ...novosArquivos];
 
         renderizarPreview(arquivosSelecionados);
+        
 
         fileInput.value = ""; // importante para permitir selecionar o mesmo arquivo novamente
     } catch (err) {
